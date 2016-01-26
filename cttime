@@ -1,0 +1,227 @@
+
+
+
+
+        Constant-time programming
+
+
+            Pascal Cuoq
+
+            TrustInSoft
+
+
+
+
+
+
+
+                                                  +
+
+
+First, an exercise.
+
+Go to:
+https://github.com/pascal-cuoq/constant-time-exercises
+
+or type:
+git clone \
+https://github.com/pascal-cuoq/constant-time-exercises.git
+
+Then crack password.Linux (password.OSX if using OS X)
+
+Question: what about modern password systems?
+
+“Do not implement your own crypto” 
+
+Applied Cryptography, Udacity, David Evans
+
+Lesson 1, slide 3
+
+“Constant-time programming”
+
+
+“Remote Timing Attacks are Practical”,
+                 David Brumley & Dan Boneh (2003)
+
+
+
+“constant-time” = execution time independent of
+      secret inputs
+
+In the beginning was ctgrind (2010)
+
+
+Analysis more promising than empirical approach
+
+Taking advantage of Valgrind:
+  Poison secrets
+  Detect use as adresses or in conditional jumps
+
+Unexpectedly general for dynamic analysis:
+
+“Execution time does not depend on secrets”
+
+    ⇒ “For all values of the secrets, …”
+
+No such argument for public inputs
+
+
+
+In academia:
+
+
+A prototype in Frama-C   (pathdeps & memdeps) 
+    implemented shortly after ctgrind
+    advertized in 2011 blog post
+
+
+CacheAudit: A Tool for the Static Analysis of 
+       Cache Side Channels (2013)
+
+
+System-level non-interference 
+          for constant-time cryptography (2014)
+
+“Pathdeps” and “memdeps” Frama-C options 
+
+
+Compute dependencies of all “if(e)” and “*p”
+
+Verifying “constant-time” at the C level
+
+We assume a C compiler that makes this possible
+
+Example:
+
+double g(int64_t x, uint32_t y, uint64_t z) {
+  double d = x;
+  double e = y;
+  double f = z;
+  return d+e+f;
+}
+
+“Pathdeps” and “memdeps” Frama-C options
+
+
+Similar to ctgrind in that no proof is provided
+  (formal or informal)
+
+But a tool is provided
+
+Limitations of original implementation
+          (fixed in recent work)
+
+- used values memorized for all calls
+
+- assertions
+
+- quality of messages
+
+Ex-limitation 1:
+Usage of values memorized by function
+
+int a, b, c;
+
+void f(int *p) {
+  a = *p;
+}
+
+int main(void) {
+  f(&b);
+  f(&c);
+  if (a) …
+}
+
+Ex-limitation 2:
+Assertions
+
+void BN_consttime_swap(BN_ULONG condition, 
+                BIGNUM *a, BIGNUM *b, int nwords)
+{
+…
+    assert((condition & (condition - 1)) == 0);
+…
+    condition = 
+       ((condition - 1) >> (BN_BITS2 - 1)) - 1;
+
+    t = (a->top ^ b->top) & condition;
+    a->top ^= t;
+    b->top ^= t;
+…
+
+Ex-limitation 3:
+Quality of messages
+
+
+Before:
+The execution path of f() depends on the input x
+
+After:
+The execution path of f() depends on the input x
+because of the condition at file.c:42
+
+“Pathdeps” and “memdeps” Frama-C options
+
+
+Remaining issue: precomputed tables
+
+Example: m-ary method for exponentiation aⁿ
+
+Improvement over exponentiation by squaring:
+
+ n = 100 000 110 
+
+Table of small powers of a up to a^7
+
+Precomputed tables
+
+
+Inefficient but obviously constant-time:
+
+bigint tbl[8];
+…
+bigint access_tbl(int n) {
+  bigint result = 0;
+  for (int i = 0; i<8; i++)
+    result = result | (tbl[i] & (-(i == n)));
+  return result;
+}
+
+Precomputed tables
+
+
+Actual implementations: bit-slicing
+
+#define S …
+bigint_slice tbl[8][S];
+…
+bigint access_tbl(int n) {
+  bigint result = 0;
+  for (int i = 0; i<S; i++)
+    result = result | (tbl[n][i] << …);
+  return result;
+}
+
+
+Except!
+
+The execution time of a/b also depends on a and b
+
+“Compiler Mitigations for Time Attacks 
+   on Modern x86 Processors”
+
+Also protocols
+
+
+Counter-measures against padding oracle attacks 
+(Vaudenay) in PolarSSL
+
+
+Conclusion
+
+
+“We believe it is harder to create and maintain
+ code where the decryption time is not dependent
+ upon the ciphertext.” (Brumley & Boneh 2003)
+
+
