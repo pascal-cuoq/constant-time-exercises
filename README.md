@@ -3,7 +3,9 @@ Various exercises illustrating constant-time programming
 
 Order:
 
-- before we start: find the password expected by the binary program “password”
+- before we start:
+
+ - password: find the password expected by the binary program
 
 - practice session:
 
