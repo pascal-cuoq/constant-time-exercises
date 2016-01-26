@@ -1,0 +1,5 @@
+Voici un lien:
+
+https://github.com/awslabs/s2n/blob/e5cadd53a85ac27976d5bdb7ba1501945675c5de/tls/s2n_cbc.c#L48
+
+que pensez-vous de cette fonction en termes de fuites d'informations par temps d'exécution ?
