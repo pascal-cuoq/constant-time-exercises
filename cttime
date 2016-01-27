@@ -21,13 +21,16 @@
 First, an exercise.
 
 Go to:
-https://github.com/pascal-cuoq/constant-time-exercises
+https://github.com/pascal-cuoq/…
+         constant-time-exercises
 
 or type:
-git clone \
-https://github.com/pascal-cuoq/constant-time-exercises.git
+git clone https://github.com/pascal-cuoq/…
+         constant-time-exercises.git
 
-Then crack password.Linux (password.OSX if using OS X)
+Then crack password.Linux 
+   (or password.OSX if using OS X)
+
 
 Question: what about modern password systems?
 
@@ -40,9 +43,11 @@ Lesson 1, slide 3
 “Constant-time programming”
 
 
+“Timing Attacks on …”, Paul Kocher (1996)
+
+
 “Remote Timing Attacks are Practical”,
                  David Brumley & Dan Boneh (2003)
-
 
 
 “constant-time” = execution time independent of

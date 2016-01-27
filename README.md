@@ -7,6 +7,10 @@ Order:
 
  - password: find the password expected by the binary program
 
+- interlude:
+
+ - convert.c: 
+
 - practice session:
 
  - divide.c
